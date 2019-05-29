@@ -19,7 +19,9 @@ import idu.cs.domain.User;
 import idu.cs.exception.ResourceNotFoundException;
 import idu.cs.repository.UserRepository;
 
-@Controller
+@Controller //@Component, @Service, @Repository
+//Spring Framework에게 이 클래스로부터 작성된 객체는 controller역할을 함을 알려줌
+//Spring이 이클래스로부터 Bean객체를 생성해서 등록할 수 있음.
 public class UserController {
 	@Autowired UserRepository userRepo; // Dependency Injection
 	
@@ -47,12 +49,18 @@ public class UserController {
 		}
 		//userRepo.save(user);
 		session.setAttribute("user", sessionUser);
-		return "/";
+		return "redirect:/";
+	}
+	@GetMapping("/logout")
+	public String logoutUser(HttpSession session) {
+		session.removeAttribute("user");
+		//session.invalidate();
+	return "redirect:/";
 	}
 	
-	@GetMapping("/user-regist")
+	@GetMapping("/user-regist-form")
 	public String getRegForm(Model model) {
-		return "form";
+		return "register";
 	}
 	
 	
@@ -64,11 +72,13 @@ public class UserController {
 	
 	@PostMapping("/users")
 	public String createUser(@Valid User user, Model model) {
-		userRepo.save(user);
+		if(userRepo.save(user) != null)
+			System.out.println("Database 등록");
+		else
+			System.out.println("Database등록 실패");
 		model.addAttribute("users", userRepo.findAll());
 		return "redirect:/users";
-	}
-	
+	}	
 	@GetMapping("/users/{id}")
 	public String getUserById(@PathVariable(value = "id") Long userId, Model model)
 			throws ResourceNotFoundException {

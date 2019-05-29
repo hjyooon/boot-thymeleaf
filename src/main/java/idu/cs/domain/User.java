@@ -5,18 +5,30 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Column;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_table")
 public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id; 
-	// database에서 sequence number, primary key 역할
+	// database에서 sequence number, auto increment => primary key 역할
+	@Column(nullable=false,length=20,unique=true)
 	private String userId;
 	private String userPw;
 	private String name;
 	private String company;
+	
+	public User() {}
+	
+	public User(String userId, String userPw, String name, String company) {
+		super();
+		this.userId = userId;
+		this.userPw = userPw;
+		this.name = name;
+		this.company = company;
+	}
 	
 	public String getUserId() {
 		return userId;
